@@ -52,10 +52,11 @@ The html5 phonegap code includes the javascript `cordova.js` file, which will be
 
 To test this in a local environment:
 
-1. npm install -g browser-sync if you haven't already
-1. `browser-sync start --server --files "./*"`
+1. `npm install -g ripple-emulator` if you haven't already
+1. `ripple emulate`
+1. If your browser doesn't open up with your project in it surf to `http://localhost:4400/?enableripple=true`
 
-You can also get the phonegapready event by installing the ripple beta google chrome plugin.
+To get the phonegap ready event select Cordova 2.0.
 
 This can be loaded up on phonegap build, and turned into a apk that can be put on your phone.
 To install this on phonegap build:
