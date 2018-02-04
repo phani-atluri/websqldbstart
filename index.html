@@ -2,6 +2,11 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            .close{
+                text-decoration: line-through;
+            }
+        </style>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js">
         </script>
         <script src="cordova.js"></script>
@@ -54,7 +59,7 @@
                             $scope.todos = [];
                             for(var n = 0; n < rs.rows.length; n++){
                                 $scope.todos.push({name: rs.rows.item(n).todo,
-                                ID: rs.rows.item(n).ID});
+                                ID: rs.rows.item(n).ID, finished_on: rs.rows.item(n).finished_on});
                             }
                             $scope.$apply();
 
@@ -77,6 +82,27 @@
                         });
                     });
                 }
+                $scope.finishTodo = function(id){
+                    db.transaction(function(tx){
+                        var dToday = new Date();
+                        tx.executeSql("UPDATE todo SET finished_on = ? WHERE ID = ?",
+                        [dToday, id],
+                        function(tx){
+                            $scope.readTodos();
+                        },
+                        function(err){
+                            console.log(err);
+                        });
+                    });
+                    
+                }
+                $scope.getClass = function(finished_on){
+                    if(finished_on){
+                        return("close");
+                    }else{
+                        return("open");
+                    }
+                }
             });
 
         </script>
@@ -85,7 +111,9 @@
         <h1>WebDb TodoList</h1>
         <p>This is a simple todolist. Type a task in the box below. Click on the plus button to add to the list</p>
         <form ng-app="TodoApp" ng-controller="TodoCtrl" ng-submit="addTodo()">
-            <div ng-repeat="todo in todos"><button type="button" ng-click="deleteTodo(todo.ID)">-</button>&nbsp;{{todo.name}}</div>
+            <div ng-repeat="todo in todos"><button type="button" ng-click="deleteTodo(todo.ID)">-</button>
+                <button type="button" ng-click="finishTodo(todo.ID)">&#10004;</button>
+                <span ng-class="getClass(todo.finished_on)">&nbsp;{{todo.name}}</span></div>
             <input ng-model="todoItem"/>
             <button type="submit">+</button>
         </form>
